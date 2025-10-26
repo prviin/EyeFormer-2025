@@ -4,7 +4,9 @@ eval_image_root: 'data/dataset/test'
 
 bert_config: 'configs/config_bert.json'
 
-image_res: 256
+image_res:
+ - 256
+ - 128
 vision_width: 768
 embed_dim: 256
 batch_size: 64
@@ -19,7 +21,7 @@ dropout: 0.1
 
 
 optimizer: {opt: adamW, lr: 1e-5, weight_decay: 0.02}
-schedular: {sched: cosine, lr: 1e-5, epochs: 20, min_lr: 1e-6, decay_rate: 1, warmup_lr: 1e-5, warmup_epochs: 1, cooldown_epochs: 0}
+schedular: {sched: cosine, lr: 1e-5, epochs: 2, min_lr: 1e-6, decay_rate: 1, warmup_lr: 1e-5, warmup_epochs: 1, cooldown_epochs: 0}
 
 
 

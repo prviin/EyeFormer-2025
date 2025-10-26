@@ -8,16 +8,27 @@ from dataset.coord_dataset import tracking_dataset_pretrain, tracking_dataset, t
 from dataset.randaugment import RandomAugment
 
 
+def _resolve_resize_dims(image_res):
+    if isinstance(image_res, int):
+        return (image_res, image_res)
+    if isinstance(image_res, (list, tuple)) and len(image_res) == 2:
+        width, height = image_res
+        return (height, width)
+    raise ValueError(f"image_res must be an int or a (width, height) tuple but got {image_res} and the type is {type(image_res)}")
+
+
 def create_dataset(dataset, config):
     normalize = transforms.Normalize((0.48145466, 0.4578275, 0.40821073), (0.26862954, 0.26130258, 0.27577711))
 
+    resize_hw = _resolve_resize_dims(config['image_res'])
+
     tracking_transform = transforms.Compose([
-        transforms.Resize((config['image_res'], config['image_res']), interpolation=Image.BICUBIC),
+        transforms.Resize(resize_hw, interpolation=Image.BICUBIC),
         transforms.ToTensor(),
         normalize,
     ])
     saliency_transform = transforms.Compose([
-        transforms.Resize((config['image_res'], config['image_res']), interpolation=Image.BICUBIC),
+        transforms.Resize(resize_hw, interpolation=Image.BICUBIC),
         transforms.ToTensor(),
     ])
 

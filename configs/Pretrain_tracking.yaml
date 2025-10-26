@@ -4,7 +4,9 @@ eval_image_root: 'data/dataset/test'
 
 bert_config: 'configs/config_bert.json'
 
-image_res: 256
+image_res: 
+ - 256
+ - 128
 vision_width: 768
 embed_dim: 256
 batch_size: 64

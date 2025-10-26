@@ -17,6 +17,15 @@ import numpy as np
 import random
 
 
+def _resolve_image_size(image_res):
+    if isinstance(image_res, int):
+        return image_res
+    if isinstance(image_res, (list, tuple)) and len(image_res) == 2:
+        width, height = image_res
+        return (height, width)
+    raise ValueError("image_res must be an int or a (width, height) tuple")
+
+
 class TrackingTransformer(nn.Module):
     def __init__(self,
                  tokenizer = None,
@@ -32,8 +41,10 @@ class TrackingTransformer(nn.Module):
         self.max_words = max_words
         print("Model will generate %s points" % self.max_words)
      
+        vision_img_size = _resolve_image_size(config['image_res'])
+
         self.visual_encoder = VisionTransformer(
-            img_size=config['image_res'], patch_size=16, embed_dim=768, depth=12, num_heads=12, 
+            img_size=vision_img_size, patch_size=16, embed_dim=768, depth=12, num_heads=12, 
             mlp_ratio=4, qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6))   
         
         if init_deit:
@@ -151,7 +162,6 @@ class TrackingTransformer(nn.Module):
             past_key_values = coord_output.past_key_values
 
         return coord[:, 1:]
-
 
 
 

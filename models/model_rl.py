@@ -41,39 +41,40 @@ def create_circular_mask(h, w, fixations_x, fixations_y, r1, r2):
 
 
 def process_saliency(res, saliency, w, h):
-    ### The image is resized to a square, so we use only one variable
-    width = saliency.shape[1]
+    saliency_height = saliency.shape[1]
+    saliency_width = saliency.shape[2]
 
-    
-    # print("------\n", width, w, h, "------")
-    
-
-    scalar = torch.minimum(1920 / w, 1200 / h)
+    w = w.float()
+    h = h.float()
+    scalar = torch.minimum(1920.0 / w, 1200.0 / h)
 
     # the radius should be one visual angle divided by the resize ratio.
-    ### We pre-set a radius value of 120
-    radius = 120 / scalar
-    r1 = radius / w * width
-    r2 = radius / h * width
+    # We pre-set a radius value of 120
+    radius = 120.0 / scalar
+    r1 = radius / w * saliency_width
+    r2 = radius / h * saliency_height
 
-    ### The width 256 is discretized from 0 to 255
-    res = res * (width - 1)
-    res = np.rint(res).astype(int)
-    seq_len = res.shape[1]
+    row_indices = np.clip(
+        np.rint(res[:, :, 0] * (saliency_height - 1)), 0, saliency_height - 1
+    ).astype(int)
+    col_indices = np.clip(
+        np.rint(res[:, :, 1] * (saliency_width - 1)), 0, saliency_width - 1
+    ).astype(int)
+
+    seq_len = row_indices.shape[1]
     saliency_value_list = []
     for i in range(seq_len):
-        res_pos = res[:, i]
-        res_pos_range = np.arange(res.shape[0])[:, np.newaxis]
-        res_pos_row = res_pos[:, 0][:, np.newaxis]
-        res_pos_col = res_pos[:, 1][:, np.newaxis]
+        res_pos_range = np.arange(row_indices.shape[0])[:, np.newaxis]
+        res_pos_row = row_indices[:, i][:, np.newaxis]
+        res_pos_col = col_indices[:, i][:, np.newaxis]
         saliency_value = saliency[res_pos_range, res_pos_row, res_pos_col]
         saliency_value_list.append(saliency_value)
 
-        fixations_x = res[:, :i+1, 0]
-        fixations_y = res[:, :i+1, 1]
+        fixations_x = row_indices[:, :i+1]
+        fixations_y = col_indices[:, :i+1]
 
         ### Block the surrounding areas of the predicted points
-        saliency_mask = create_circular_mask(saliency.shape[1], saliency.shape[2], fixations_x, fixations_y, r1, r2)
+        saliency_mask = create_circular_mask(saliency_height, saliency_width, fixations_x, fixations_y, r1, r2)
         saliency_mask = saliency_mask.data.cpu().numpy()
         saliency = saliency * saliency_mask
     saliency_value_list = np.concatenate(saliency_value_list, 1)
