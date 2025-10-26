@@ -44,6 +44,10 @@ def process_saliency(res, saliency, w, h):
     ### The image is resized to a square, so we use only one variable
     width = saliency.shape[1]
 
+    
+    # print("------\n", width, w, h, "------")
+    
+
     scalar = torch.minimum(1920 / w, 1200 / h)
 
     # the radius should be one visual angle divided by the resize ratio.
@@ -54,7 +58,7 @@ def process_saliency(res, saliency, w, h):
 
     ### The width 256 is discretized from 0 to 255
     res = res * (width - 1)
-    res = np.rint(res).astype(np.int)
+    res = np.rint(res).astype(int)
     seq_len = res.shape[1]
     saliency_value_list = []
     for i in range(seq_len):

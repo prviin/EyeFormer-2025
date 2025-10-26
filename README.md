@@ -60,6 +60,12 @@ mse_tracking_pretrain.py \
 --output_dir output/scanpath_prediction_population_pretrain \
 ```
 
+for new codes run:
+
+```sh
+CUDA_VISIBLE_DEVICES=1 torchrun --nproc_per_node=1 mse_tracking_pretrain.py --output_dir output/scanpath_prediction_population_pretrain
+```
+
 The model will be saved in `output/scanpath_prediction_population_pretrain`. Before running it, please change your data path in `configs/Pretrain_tracking.yaml`.
 
 >`train_file` is the root path to store csv of fixation points
@@ -71,11 +77,20 @@ The model will be saved in `output/scanpath_prediction_population_pretrain`. Bef
 ### Stage Two: Reinforcement Learning
 
 ```sh
-python -m torch.distributed.launch --nproc_per_node=1 --use_env --master_port=xxxx \
+python -m torch.distributed.launch --nproc_per_node=1 --use_env --master_port \
 mse_tracking.py \
 --output_dir output/scanpath_prediction_population_rl \
 --checkpoint output/scanpath_prediction_population_pretrain/checkpoint_29.pth \
 ```
+
+for new codes run:
+
+```sh
+CUDA_VISIBLE_DEVICES=1 torchrun --nproc_per_node=1 mse_tracking.py \
+--output_dir output/scanpath_prediction_population_rl \
+--checkpoint output/scanpath_prediction_population_pretrain/checkpoint_29.pth
+```
+
 
 The models will be saved in `output/scanpath_prediction_population_rl`. Before running it, please change your data path in `configs/Tracking.yaml`.
 

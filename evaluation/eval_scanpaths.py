@@ -155,7 +155,7 @@ def mannan_distance(P, Q):
     dist = np.zeros((P.shape[0], Q.shape[0]))
     for idx_1, fix_1 in np.ndenumerate(P):
         for idx_2, fix_2 in np.ndenumerate(Q):
-            dist[idx_1, idx_2] = euclidean(fix_1, fix_2)
+            dist[idx_1, idx_2] = euclidean([fix_1], [fix_2])
 
     return (1 / (P.shape[0] + Q.shape[0])) * \
         (np.power(dist.min(axis=0).sum(), 2) + np.power(dist.min(axis=1).sum(), 2))
@@ -169,7 +169,7 @@ def eyenalysis(P, Q):
     dist = np.zeros((P.shape[0], Q.shape[0]))
     for idx_1, fix_1 in np.ndenumerate(P):
         for idx_2, fix_2 in np.ndenumerate(Q):
-            dist[idx_1, idx_2] = euclidean(fix_1, fix_2)
+            dist[idx_1, idx_2] = euclidean([fix_1], [fix_2])
 
     return (1 / (P.shape[0] + Q.shape[0])) * \
         (dist.min(axis=0).sum() + dist.min(axis=1).sum())

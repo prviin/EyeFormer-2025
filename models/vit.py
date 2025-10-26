@@ -1,11 +1,21 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from functools import partial
 
-from timm.models.vision_transformer import _cfg, PatchEmbed
-from timm.models.registry import register_model
-from timm.models.layers import trunc_normal_, DropPath
+# from timm.models.vision_transformer import _cfg, PatchEmbed
+# from timm.models.registry import register_model
+# from timm.models.layers import trunc_normal_, DropPath
+# Importing from timm.models.layers is deprecated, please import via timm.layers
+
+# from timm.layers.vision_transformer import PatchEmbed
+# this is old, the new version is in timm.layers
+from timm.layers.patch_embed import PatchEmbed
+# from timm.layers.layers import trunc_normal_, DropPath
+# also this is old the new version is:
+from timm.layers.weight_init import trunc_normal_
+from timm.layers.drop import DropPath
+
+
 
 
 class Mlp(nn.Module):

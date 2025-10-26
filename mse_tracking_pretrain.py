@@ -7,7 +7,7 @@
 
 import argparse
 import os
-import ruamel_yaml as yaml
+from ruamel.yaml import YAML
 import numpy as np
 import random
 import time
@@ -125,6 +125,7 @@ def main(args, config):
     optimizer = create_optimizer(arg_opt, model)
     arg_sche = utils.AttrDict(config['schedular'])
     lr_scheduler, _ = create_scheduler(arg_sche, optimizer)
+    assert lr_scheduler is not None, "lr_scheduler is None"
 
     if args.checkpoint:
         checkpoint = torch.load(args.checkpoint, map_location='cpu')
@@ -188,13 +189,17 @@ def main(args, config):
 
         result = run(eval_stat_cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         print(result)
-        result_out = result.stdout.strip()
+        try:
+            result_out = result.stdout.strip()
 
-        out = [e.strip() for e in result_out.split("\n")[:3]]
-        dtw_res = out[0].split(":")[1].strip().split(",")[0][1:]
-        tde_res = out[1].split(":")[1].strip().split(",")[0][1:]
-        eye_res = out[2].split(":")[1].strip().split(",")[0][1:]
-        print("Testing,   DTW: %.4f,   TDE: %.4f,   Eye: %.4f" % (float(dtw_res), float(tde_res), float(eye_res)))
+            out = [e.strip() for e in result_out.split("\n")[:3]]
+            dtw_res = out[0].split(":")[1].strip().split(",")[0][1:]
+            tde_res = out[1].split(":")[1].strip().split(",")[0][1:]
+            eye_res = out[2].split(":")[1].strip().split(",")[0][1:]
+            print("Testing,   DTW: %.4f,   TDE: %.4f,   Eye: %.4f" % (float(dtw_res), float(tde_res), float(eye_res)))
+        except:
+            print("Error in evaluation!")
+            print(result.stdout.strip())
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
@@ -215,7 +220,11 @@ if __name__ == '__main__':
     parser.add_argument('--distributed', default=True, type=bool)
     args = parser.parse_args()
 
-    config = yaml.load(open(args.config, 'r'), Loader=yaml.Loader)
+    # config = yaml.load(open(args.config, 'r'), Loader=yaml.Loader)
+    yaml=YAML(typ='safe')
+    with open(args.config, 'r') as f:
+        config = yaml.load(f)
+
 
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
 

@@ -186,7 +186,7 @@ class tracking_dataset_pretrain(Dataset):
         trunc_coord_x = np.array([c[0] for c in trunc_coord]).astype(np.float32)
         trunc_coord_y = np.array([c[1] for c in trunc_coord]).astype(np.float32)
 
-        trunc_mask = np.zeros(self.max_words).astype(np.int)
+        trunc_mask = np.zeros(self.max_words).astype(int)
 
         if len(coord) <= self.max_words:
             trunc_mask[:len(coord)] = 1

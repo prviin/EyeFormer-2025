@@ -203,7 +203,10 @@ if args.scanpaths:
                     p_seq = np.array(pred['scanpath'])
                     if len(r_seq) <= 3:
                         continue 
-
+                    
+                    # print(f'Comparing predicted scanpath (len={len(p_seq)}) vs reference scanpath (len={len(r_seq)}) for image {ref["image"]} and user {ref["username"]} ...')
+                    # print('Predicted scanpath:', p_seq.shape)
+                    # print('Reference scanpath:', r_seq.shape)
                     # Compute evaluation metrics that don't depend on the viewport size.
                     dtw = scan.DTW(p_seq, r_seq)
                     tde = scan.TDE(p_seq, r_seq)

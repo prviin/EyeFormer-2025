@@ -5,3 +5,5 @@ weights/
 *.jpg
 output/
 
+data/
+venv/
