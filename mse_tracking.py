@@ -181,14 +181,18 @@ def main(args, config):
 
             result = run(eval_stat_cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
             print(result)
-            result_out = result.stdout.strip()
+            try:
+                result_out = result.stdout.strip()
 
-            out = [e.strip() for e in result_out.split("\n")[:3]]
-            dtw_res = out[0].split(":")[1].strip().split(",")[0][1:]
-            tde_res = out[1].split(":")[1].strip().split(",")[0][1:]
-            eye_res = out[2].split(":")[1].strip().split(",")[0][1:]
-            print("Testing,   DTW: %.4f,   TDE: %.4f,   Eye: %.4f" % (float(dtw_res), float(tde_res), float(eye_res)))
-
+                out = [e.strip() for e in result_out.split("\n")[:3]]
+                dtw_res = out[0].split(":")[1].strip().split(",")[0][1:]
+                tde_res = out[1].split(":")[1].strip().split(",")[0][1:]
+                eye_res = out[2].split(":")[1].strip().split(",")[0][1:]
+                print("Testing,   DTW: %.4f,   TDE: %.4f,   Eye: %.4f" % (float(dtw_res), float(tde_res), float(eye_res)))
+            except:
+                print("Error in evaluation!")
+                print(result.stdout)
+                print(result.stderr)
             log_stats = {**{f'train_{k}': v for k, v in train_stats.items()},
                          'epoch': epoch,
                          }
