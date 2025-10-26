@@ -52,6 +52,12 @@ Experiments are reproduced on **one NVIDIA V100**. The random seed is fixed to a
 
 **NOTE**: Although the code uses `torch.distributed`, running with multiple GPUs has not been tested.
 
+too activate the venv use:
+
+```sh
+source venv/bin/activate
+```
+
 ### Stage One: Pretraining 
 
 ```sh
